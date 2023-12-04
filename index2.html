@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #endorsement-el {
+            background-color: yellowgreen;
+        }
+    </style>
+</head>
+<body>
+    <div>Hello world</div>
+
+    <script type="module">
+        //firebase stuff-->
+        import {initializeApp} from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"
+        import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"
+
+        const appSettings = {
+            databaseURL: "https://shopping-cart-e4268-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        }
+
+        const app = initializeApp(appSettings)
+        const database = getDatabase(app)
+        const listInDB = ref(database,"sample-endorsement")
+       //<--firebase stuff 
+       
+        let endorsement = {
+            sender: "Ryan",
+            message: "Hey just wanna say you're doing a great job, keep it up",
+            reciever: "Other Ryan",
+            likes: 1
+        }
+
+        // push(listInDB, endorsement)
+
+        onValue(listInDB, function(snapshot) {
+            const personObjectAll = Object.entries(snapshot.val()) //all entries 
+            const personObjectNode = personObjectAll[0] // a single object entry filled with an ID and an Object
+            const personObjectNodeId = personObjectNode[0] //the id of the particular object
+            var personObjectNodeObject = personObjectNode[1] // the actual object and its contents 
+
+            createList(personObjectNodeObject.sender, personObjectNodeObject.message, personObjectNodeObject.reciever)
+        })
+
+        function createList(sender, message, receiver){
+            const newEndorsementInList = document.createElement("li")
+            newEndorsementInList.setAttribute("id","endorsement-el")
+            newEndorsementInList.innerHTML = `To ${sender}, ${message}. From ${receiver}`
+
+             document.body.appendChild(newEndorsementInList)
+
+            const buttonInsideEndorsement = document.createElement("button")
+            buttonInsideEndorsement.setAttribute("id","button-in-endorsement")
+            buttonInsideEndorsement.innerText = "like"
+
+            document.getElementById("endorsement-el").appendChild(buttonInsideEndorsement)
+
+            console.log(document.body.innerHTML)
+        }
+    </script>
+</body>
+</html>
